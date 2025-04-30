@@ -1,4 +1,5 @@
 package main
+import "blockplain/consensus"
 
 import (
 	"blockplain/block"
