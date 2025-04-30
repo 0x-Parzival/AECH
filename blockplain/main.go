@@ -6,51 +6,52 @@ import (
 	"blockplain/explorer"
 	"blockplain/txpool"
 	"blockplain/consensus"
-	"blockplain/bridge"
+	"fmt"
 )
 
 func main() {
-	// Create two planes for source and destination
-	sourcePlane := plane.NewPlane()
-	destPlane := plane.NewPlane()
-
-	// Initialize the transaction pool
+	p := plane.NewPlane()
 	pool := txpool.NewTxPool()
 
-	// Add some transactions
+	// Add transactions to the pool
 	pool.AddTransaction(txpool.Transaction{ID: "tx1", Data: "Alice → Bob"})
 	pool.AddTransaction(txpool.Transaction{ID: "tx2", Data: "Bob → Charlie"})
+	pool.AddTransaction(txpool.Transaction{ID: "tx3", Data: "Charlie → Dave"})
+	pool.AddTransaction(txpool.Transaction{ID: "tx4", Data: "Dave → Eve"})
 
-	// Get the transactions
+	// Get transactions from the pool
 	txs := pool.GetTransactions()
-	data := []string{}
-	for _, tx := range txs {
-		data = append(data, tx.Data)
-	}
 
-	// Create Genesis block for source plane
+	// Create Genesis block
 	genesis := block.NewBlock(0, 0, []string{"Genesis"}, "Root", "proof_genesis", "", "")
 	if consensus.ValidateProof(genesis.Proof) {
-		sourcePlane.AddBlock(0, 0, genesis)
+		p.AddBlock(0, 0, genesis)
 	}
 
-	// Create next block for source plane using transaction data
-	b1 := block.NewBlock(1, 0, data, "TimeLayer", "proof_1", genesis.Hash, "")
-	if consensus.ValidateProof(b1.Proof) {
-		sourcePlane.AddBlock(1, 0, b1)
+	// Create subsequent blocks using transaction data
+	x, y := 1, 0 // Start at (1, 0) after the genesis block
+	for len(txs) > 0 {
+		// Group transactions for the block
+		blockData := []string{}
+		for i := 0; i < 2 && len(txs) > 0; i++ {
+			blockData = append(blockData, txs[0].Data)
+			txs = txs[1:]
+		}
+
+		// Create a new block with the transaction data
+		newBlock := block.NewBlock(x, y, blockData, "TimeLayer", fmt.Sprintf("proof_%d", x), genesis.Hash, "")
+		if consensus.ValidateProof(newBlock.Proof) {
+			p.AddBlock(x, y, newBlock)
+		}
+
+		// Move to the next block position
+		y++
+		if y > 2 { // You can adjust this limit as needed
+			x++
+			y = 0
+		}
 	}
 
-	// Create the bridge
-	br := bridge.NewBridge(sourcePlane, destPlane)
-
-	// Relaying transactions or blocks
-	br.RelayTransaction(data, "TimeLayer", "proof_2")
-	br.RelayBlock(b1)
-
-	// Print source and destination planes
-	fmt.Println("Source Plane:")
-	explorer.PrintPlane(sourcePlane)
-
-	fmt.Println("Destination Plane:")
-	explorer.PrintPlane(destPlane)
+	// Print the 2D plane
+	explorer.PrintPlane(p)
 }
