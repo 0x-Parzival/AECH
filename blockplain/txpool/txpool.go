@@ -31,3 +31,25 @@ func (tp *TxPool) Process() {
 	}
 	wg.Wait()
 }
+type Transaction struct {
+	ID   string
+	Data string
+}
+
+type TxPool struct {
+	Transactions []Transaction
+}
+
+func NewTxPool() *TxPool {
+	return &TxPool{}
+}
+
+func (p *TxPool) AddTransaction(tx Transaction) {
+	p.Transactions = append(p.Transactions, tx)
+}
+
+func (p *TxPool) GetTransactions() []Transaction {
+	txs := p.Transactions
+	p.Transactions = nil // flush pool
+	return txs
+}
