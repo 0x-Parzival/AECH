@@ -3,9 +3,10 @@ package explorer
 import (
 	"fmt"
 	"blockplain/plane"
+	"blockplain/block"
 )
 
-// PrintPlane will print the details of the entire 2D plane
+// PrintPlane prints details of the entire 2D plane of blocks
 func PrintPlane(p *plane.Plane) {
 	for y := 0; y < len(p.Plane); y++ {
 		for x := 0; x < len(p.Plane[y]); x++ {
@@ -19,7 +20,7 @@ func PrintPlane(p *plane.Plane) {
 	}
 }
 
-// Helper function to print block details
+// printBlockDetails prints the full details of a single block
 func printBlockDetails(b *block.Block) {
 	fmt.Printf("Block at [%d, %d] - Hash: %s\n", b.X, b.Y, b.Hash)
 	fmt.Printf("  Previous Block Hash (PrevX, PrevY): %s, %s\n", b.PrevHashX, b.PrevHashY)
