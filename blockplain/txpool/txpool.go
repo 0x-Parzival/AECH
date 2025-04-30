@@ -12,31 +12,47 @@ type Transaction struct {
 
 type TxPool struct {
 	mu           sync.Mutex
-	Transactions []Transaction
+	Transactions map[string]Transaction
 }
 
+// Constructor
 func NewTxPool() *TxPool {
-	return &TxPool{}
+	return &TxPool{
+		Transactions: make(map[string]Transaction),
+	}
 }
 
+// Add transaction if not already present
 func (p *TxPool) AddTransaction(tx Transaction) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	p.Transactions = append(p.Transactions, tx)
+	if _, exists := p.Transactions[tx.ID]; !exists {
+		p.Transactions[tx.ID] = tx
+	}
 }
 
+// Return all transactions and flush pool
 func (p *TxPool) GetTransactions() []Transaction {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	txs := p.Transactions
-	p.Transactions = nil // flush pool
+
+	txs := make([]Transaction, 0, len(p.Transactions))
+	for _, tx := range p.Transactions {
+		txs = append(txs, tx)
+	}
+	p.Transactions = make(map[string]Transaction) // flush
 	return txs
 }
 
+// Concurrently process all transactions
 func (p *TxPool) Process() {
 	var wg sync.WaitGroup
+
 	p.mu.Lock()
-	txs := p.Transactions
+	txs := make([]Transaction, 0, len(p.Transactions))
+	for _, tx := range p.Transactions {
+		txs = append(txs, tx)
+	}
 	p.mu.Unlock()
 
 	for _, tx := range txs {
