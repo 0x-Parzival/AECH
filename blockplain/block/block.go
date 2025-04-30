@@ -16,6 +16,7 @@ type Block struct {
 	Hash        string
 }
 
+// Compute a unique SHA-256 hash of the block
 func (b *Block) ComputeHash() string {
 	h := sha256.New()
 	h.Write([]byte(
@@ -32,15 +33,17 @@ func (b *Block) ComputeHash() string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func NewBlock(x, y int, txs []string, context string, proof string, prevHashX string, prevHashY string) *Block {
-	block := &Block{
-		X: x, Y: y,
+// Constructor for a new block
+func NewBlock(x, y int, txs []string, context, proof, prevHashX, prevHashY string) *Block {
+	b := &Block{
+		X:         x,
+		Y:         y,
 		Data:      txs,
 		Context:   context,
 		Proof:     proof,
 		PrevHashX: prevHashX,
 		PrevHashY: prevHashY,
 	}
-	block.Hash = block.ComputeHash()
-	return block
+	b.Hash = b.ComputeHash()
+	return b
 }
