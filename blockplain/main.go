@@ -12,24 +12,29 @@ func main() {
 	p := plane.NewPlane()
 	pool := txpool.NewTxPool()
 
+	// Add transactions to the pool
 	pool.AddTransaction(txpool.Transaction{ID: "tx1", Data: "Alice → Bob"})
 	pool.AddTransaction(txpool.Transaction{ID: "tx2", Data: "Bob → Charlie"})
 
+	// Get transactions from the pool
 	txs := pool.GetTransactions()
 	data := []string{}
 	for _, tx := range txs {
 		data = append(data, tx.Data)
 	}
 
+	// Create Genesis block
 	genesis := block.NewBlock(0, 0, []string{"Genesis"}, "Root", "proof_genesis", "", "")
 	if consensus.ValidateProof(genesis.Proof) {
 		p.AddBlock(0, 0, genesis)
 	}
 
+	// Create next block using tx data
 	b1 := block.NewBlock(1, 0, data, "TimeLayer", "proof_1", genesis.Hash, "")
 	if consensus.ValidateProof(b1.Proof) {
 		p.AddBlock(1, 0, b1)
 	}
 
+	// Print the 2D plane with detailed block information
 	explorer.PrintPlane(p)
 }
