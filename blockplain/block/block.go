@@ -31,3 +31,16 @@ func (b *Block) ComputeHash() string {
 	}
 	return hex.EncodeToString(h.Sum(nil))
 }
+
+func NewBlock(x, y int, txs []string, context string, proof string, prevHashX string, prevHashY string) *Block {
+	block := &Block{
+		X: x, Y: y,
+		Data:      txs,
+		Context:   context,
+		Proof:     proof,
+		PrevHashX: prevHashX,
+		PrevHashY: prevHashY,
+	}
+	block.Hash = block.ComputeHash()
+	return block
+}
