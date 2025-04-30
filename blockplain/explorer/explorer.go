@@ -3,29 +3,32 @@ package explorer
 import (
 	"fmt"
 	"blockplain/plane"
-	"blockplain/block"
+	"github.com/fatih/color" // For colored output
 )
 
-// PrintPlane prints details of the entire 2D plane of blocks
+// PrintPlane will print the details of the entire 2D plane with better formatting
 func PrintPlane(p *plane.Plane) {
-	for y := 0; y < len(p.Plane); y++ {
-		for x := 0; x < len(p.Plane[y]); x++ {
-			block := p.Plane[y][x]
+	color.Green("------ Blockplain 2D Blockchain ------")
+	for y := 0; y < len(p.Grid); y++ {
+		fmt.Printf("\nRow %d:\n", y)
+		for x := 0; x < len(p.Grid[y]); x++ {
+			block := p.Grid[y][x]
 			if block != nil {
 				printBlockDetails(block)
 			} else {
-				fmt.Printf("No Block at [%d, %d]\n", x, y)
+				color.Red("No Block at [%d, %d]\n", x, y)
 			}
 		}
 	}
+	fmt.Println("\n----------------------------------------")
 }
 
-// printBlockDetails prints the full details of a single block
+// Helper function to print block details with better formatting
 func printBlockDetails(b *block.Block) {
-	fmt.Printf("Block at [%d, %d] - Hash: %s\n", b.X, b.Y, b.Hash)
-	fmt.Printf("  Previous Block Hash (PrevX, PrevY): %s, %s\n", b.PrevHashX, b.PrevHashY)
-	fmt.Printf("  Data: %v\n", b.Data)
-	fmt.Printf("  Context: %s\n", b.Context)
-	fmt.Printf("  Proof: %s\n", b.Proof)
-	fmt.Println()
+	color.Cyan("\nBlock at [%d, %d]", b.X, b.Y)
+	color.Magenta("\nHash: %s", b.Hash)
+	fmt.Printf("\n  Previous Block Hash (PrevX, PrevY): %s, %s", b.PrevHashX, b.PrevHashY)
+	fmt.Printf("\n  Context: %s", b.Context)
+	fmt.Printf("\n  Proof: %s", b.Proof)
+	fmt.Printf("\n  Data: %v\n", b.Data)
 }
