@@ -1,25 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import BlockGrid from './pages/BlockGrid';
+import AddBlock from './pages/AddBlock';
+import BlockDetails from './pages/BlockDetails';
+import SimulateTx from './pages/SimulateTx';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <nav style={{ padding: '10px', background: '#eee' }}>
+        <Link to="/" style={{ marginRight: '10px' }}>Grid</Link>
+        <Link to="/add">Add Block</Link>
+        <Link to="/details" style={{ marginLeft: '10px' }}>Block Details</Link>
+        <Link to="/simulate" style={{ marginLeft: '10px' }}>Simulate Tx</Link>
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<BlockGrid />} />
+        <Route path="/add" element={<AddBlock />} />
+        <Route path="/details" element={<BlockDetails />} />
+        <Route path="/simulate" element={<SimulateTx />} />
+      </Routes>
+    </Router>
   );
 }
 
