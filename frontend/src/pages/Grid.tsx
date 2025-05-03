@@ -18,3 +18,4 @@ const GridPage: React.FC = () => {
     </div>
   );
 };
+export default GridPage;
