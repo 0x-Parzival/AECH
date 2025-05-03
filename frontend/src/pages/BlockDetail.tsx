@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 const BlockDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
-  // Later: fetch actual block data using this id
   const dummyBlock = {
     id,
     x: 1,
