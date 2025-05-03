@@ -2,10 +2,10 @@ package main
 
 import (
 	"blockplain/block"
-	"blockplain/plane"
-	"blockplain/explorer"
-	"blockplain/txpool"
 	"blockplain/consensus"
+	"blockplain/explorer"
+	"blockplain/plane"
+	"blockplain/txpool"
 	"fmt"
 )
 
@@ -20,44 +20,45 @@ func main() {
 	pool.AddTransaction(txpool.Transaction{ID: "tx4", Data: "Dave → Eve"})
 	pool.AddTransaction(txpool.Transaction{ID: "tx5", Data: "Eve → Frank"})
 	pool.AddTransaction(txpool.Transaction{ID: "tx6", Data: "Frank → Grace"})
+	pool.AddTransaction(txpool.Transaction{ID: "tx7", Data: "Grace → Harry"})
+	pool.AddTransaction(txpool.Transaction{ID: "tx8", Data: "Harry → Ivan"})
 
-	// Get transactions from the pool
+	// Get all transactions from the pool
 	txs := pool.GetTransactions()
 
-	// Create Genesis block
+	// Create Genesis block at (0, 0)
 	genesis := block.NewBlock(0, 0, []string{"Genesis"}, "Root", "proof_genesis", "", "")
 	if consensus.ValidateProof(genesis.Proof) {
 		p.AddBlock(0, 0, genesis)
 	}
 
-	// Coordinates for the next blocks
-	x, y := 1, 0 // Start at (1, 0) after the genesis block
+	// Start placing blocks from (1, 0)
+	x, y := 1, 0
+	maxCols := 3 // Number of columns in the grid before moving to next row
 
-	// Create subsequent blocks using transaction data
+	// Create subsequent blocks, 2 txs per block
 	for len(txs) > 0 {
-		// Group transactions for the block (grouping 2 transactions per block)
 		blockData := []string{}
 		for i := 0; i < 2 && len(txs) > 0; i++ {
 			blockData = append(blockData, txs[0].Data)
 			txs = txs[1:]
 		}
 
-		// Create a new block with the transaction data
-		newBlock := block.NewBlock(x, y, blockData, "TimeLayer", fmt.Sprintf("proof_%d", x), genesis.Hash, "")
+		newBlock := block.NewBlock(x, y, blockData, "TimeLayer", fmt.Sprintf("proof_%d_%d", x, y), genesis.Hash, "")
 
-		// Validate the proof and add the block
 		if consensus.ValidateProof(newBlock.Proof) {
+			fmt.Printf("Adding block at (%d, %d): %v\n", x, y, blockData)
 			p.AddBlock(x, y, newBlock)
 		}
 
-		// Move to the next block position (move down in y, or if y exceeds limit, move to next row (x))
-		y++
-		if y > 2 { // Change the row after 3 blocks (adjust as needed)
-			x++
-			y = 0
+		// Move to next position in grid (row-major)
+		x++
+		if x >= maxCols {
+			x = 0
+			y++
 		}
 	}
 
-	// Print the 2D plane after block additions
+	// Print final 2D block grid
 	explorer.PrintPlane(p)
 }
