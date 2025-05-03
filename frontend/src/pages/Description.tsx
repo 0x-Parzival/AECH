@@ -4,13 +4,13 @@ import * as THREE from 'three';
 const DescriptionPage: React.FC = () => {
   useEffect(() => {
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 400, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, 400);
+    renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('three-container')?.appendChild(renderer.domElement);
 
     const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
 
@@ -27,12 +27,12 @@ const DescriptionPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-2">Blockplain Description</h2>
-      <p>This is a visual representation of how blocks interact in a 2D modular plane.</p>
-      <div id="three-container" className="mt-4" />
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-4">Description Page</h1>
+      <div id="three-container" className="w-full h-[400px] border rounded-xl" />
     </div>
   );
 };
 
 export default DescriptionPage;
+
