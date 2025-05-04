@@ -1,0 +1,2 @@
+plane.AddBlock(4, 2, [2]string{"prevHashX", "prevHashY"})
+plane.AddBlock(5, 2, [2]string{"", ""}) // for disconnected block
